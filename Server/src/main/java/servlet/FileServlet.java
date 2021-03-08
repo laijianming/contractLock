@@ -1,9 +1,14 @@
 package servlet;
 
 
+import aesEncript.AesHelper;
 import aesEncript.EncryFileUtil;
 import constant.ServerConstant;
+import dao.FileDao;
+import entity.FileInfo;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.util.StringUtil;
+import rsaEncript.RSAEncrypt;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
@@ -23,7 +28,14 @@ public class FileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uuid = req.getParameter("uuid");
-        String filename = "41a45521-d829-47df-b8fc-1bea0dcdcf0f.png";
+        if (StringUtil.isBlank(uuid)) {
+            return;
+        }
+        FileInfo fileinfo = FileDao.getFileinfo(uuid);
+        if (fileinfo == null) {
+            return;
+        }
+        String filename = fileinfo.getFilename();
         // 用于通过文件的uuid来获取加密文件流
         String filepath = ServerConstant.FILE_PATH + "\\" + filename;
         InputStream is = new FileInputStream(new File(filepath));
@@ -45,6 +57,7 @@ public class FileServlet extends HttpServlet {
 
     private static final MultipartConfigElement MULTI_PART_CONFIG = new MultipartConfigElement(ServerConstant.FILE_PATH);
 
+    @lombok.SneakyThrows
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 上传文件
@@ -62,19 +75,22 @@ public class FileServlet extends HttpServlet {
         //获取服务器的路径
         String serverpath = ServerConstant.FILE_PATH;
         String filePath = serverpath + "/" + filename;
+        String randomKey = AesHelper.getRandomKey();
         try {
-            EncryFileUtil.encryptFile(filePath, is);
+            // 加密并保存文件
+            EncryFileUtil.encryptFile(filePath, is, randomKey);
         } catch (Exception e) {
             e.printStackTrace();
         }
         is.close();
-
-        // TODO 保存uuid对应的文件
-
-
+        // 使用公钥非对称加密随机key
+        randomKey = RSAEncrypt.encrypt(randomKey, ServerConstant.pub);
+        // 保存uuid对应的文件信息
+        FileInfo fileInfo = new FileInfo(uuid, filename, randomKey);
+        FileDao.saveFileinfo(fileInfo);
         // 返回uuid
         PrintWriter out = response.getWriter();
-        out.println(uuid);
+        out.print(uuid);
     }
 
     /**
@@ -90,9 +106,4 @@ public class FileServlet extends HttpServlet {
         super.service(req, res);
     }
 
-    @Override
-    public void init() throws ServletException {
-        System.out.println("初始化");
-        super.init();
-    }
 }

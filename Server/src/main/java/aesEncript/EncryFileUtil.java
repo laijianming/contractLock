@@ -15,14 +15,15 @@ import java.util.zip.ZipOutputStream;
 public class EncryFileUtil {
 
     /**
+     * 加密文件
      * @param zipOutPath  压缩文件输出的路径
      * @param fileInputStream 要压缩的文件流
      * @throws Exception
      */
-    public static void encryptFile(String zipOutPath, InputStream fileInputStream) throws Exception {
+    public static void encryptFile(String zipOutPath, InputStream fileInputStream, String randomKey) throws Exception {
         OutputStream zipOutputPathStream = new FileOutputStream(new File(zipOutPath));
 
-        Cipher cipher = AesHelper.getEncryptCipher();
+        Cipher cipher = AesHelper.getEncryptCipher(randomKey);
         OutputStream cipherOutputStream = new CipherOutputStream(zipOutputPathStream, cipher);
         ZipOutputStream zipOutputStream = new ZipOutputStream(cipherOutputStream);
         zipOutputStream.putNextEntry(new ZipEntry(""));
@@ -54,8 +55,8 @@ public class EncryFileUtil {
      * @return 返回文件流长度
      * @throws Exception
      */
-    public static int decryptFile(InputStream zipInputStream, OutputStream outputStream) throws Exception {
-        Cipher cipher = AesHelper.getDecryptCipher();
+    public static int decryptFile(InputStream zipInputStream, OutputStream outputStream, String randomKey) throws Exception {
+        Cipher cipher = AesHelper.getDecryptCipher(randomKey);
         CipherInputStream cipherInputStream = new CipherInputStream(zipInputStream, cipher);
         ZipInputStream decryptZipInputStream = new ZipInputStream(cipherInputStream);
         if (decryptZipInputStream.getNextEntry() == null) {

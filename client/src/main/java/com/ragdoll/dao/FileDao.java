@@ -1,6 +1,6 @@
-package dao;
+package com.ragdoll.dao;
 
-import entity.FileInfo;
+import com.ragdoll.entity.FileInfo;
 
 import java.sql.*;
 import java.util.ArrayList;
