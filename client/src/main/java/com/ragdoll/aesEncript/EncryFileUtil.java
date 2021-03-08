@@ -1,4 +1,4 @@
-package com.ragdoll.aseEncript;
+package com.ragdoll.aesEncript;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;

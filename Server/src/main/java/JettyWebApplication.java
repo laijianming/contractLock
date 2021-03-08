@@ -2,6 +2,7 @@ import constant.ServerConstant;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import servlet.FileInfoServlet;
 import servlet.FileServlet;
 
 
@@ -22,10 +23,12 @@ public class JettyWebApplication {
         // 添加servlet映射
         context.addServlet(new ServletHolder(new FileServlet()), "/file");
 
+        // 添加 查询servlet
+        context.addServlet(new ServletHolder(new FileInfoServlet()), "/find");
+
         // 启动jetty服务
         server.start();
         server.join();
-
     }
 
 

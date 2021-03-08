@@ -1,4 +1,4 @@
-package aseEncript;
+package aesEncript;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;

@@ -33,6 +33,23 @@
             <artifactId>jetty-webapp</artifactId>
         </dependency>
 
+        <!-- 用于rsa非对称加密 -->
+        <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.10</version>
+        </dependency>
+        <!-- derby jdbc驱动 -->
+        <!-- https://mvnrepository.com/artifact/org.apache.derby/derbyclient -->
+        <dependency>
+            <groupId>org.apache.derby</groupId>
+            <artifactId>derbyclient</artifactId>
+            <version>10.14.2.0</version>
+        </dependency>
+
+
+
 
         <dependency>
             <groupId>junit</groupId>
