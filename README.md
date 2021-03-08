@@ -32,7 +32,7 @@ FileInfoServlet 处理 /find 的请求， doGet方法中以type参数来区分�
 Servlet、Jetty、Filter、AES、RSA、jdbc
 
 ## 数据库
-数据库使用的是 derby  
+数据库使用的是 derby 端口1527   
 ### 建库及建表sql
 CREATE DATABASE CONTRACT;  
 CREATE TABLE fileinfo (  
@@ -45,7 +45,7 @@ fileinfo表中包含文件的uuid、文件名、公钥加密后的randomKey
 TODO 文件的具体信息（创建时间、原始文件名等）可再建一张表与fileinfo进行关联
 
 ## 运行方法
-1、首先在服务器上搭建Derby数据库，并将contract库以及fileinfo表导入  
+1、首先在服务器上搭建Derby数据库，运行数据库 java -jar .\derbyrun.jar server start，并将contract库以及fileinfo表导入  
 2、将Client使用maven打包成jar包，再通过 nohup java -jar client-0.0.1-SNAPSHOT.jar 运行Client端  
 3、Server端通过插件中的jetty的run-war命令，可打包成jar包，再通过 nohup java -jar Server-1.0-SNAPSHOT.jar 运行Client端  
 
