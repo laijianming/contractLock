@@ -1,9 +1,14 @@
 import constant.ServerConstant;
+import filter.SignFilter;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import servlet.FileInfoServlet;
 import servlet.FileServlet;
+
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
 
 
 /**
@@ -25,6 +30,9 @@ public class JettyWebApplication {
 
         // 添加 查询servlet
         context.addServlet(new ServletHolder(new FileInfoServlet()), "/find");
+
+        // 添加过滤器 用于请求验证
+        context.addFilter(new FilterHolder(new SignFilter()), "/*", EnumSet.of(DispatcherType.REQUEST));
 
         // 启动jetty服务
         server.start();
