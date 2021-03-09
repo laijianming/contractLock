@@ -8,7 +8,7 @@ public class ServerConstant {
 
     public final static int PORT = 9999;
 
-    public final static String FILE_PATH = "D:\\IDEA_Workspace\\contract\\file";
+    public final static String FILE_PATH = "/usr/local/contract/file";
 
     /**
      * 公钥

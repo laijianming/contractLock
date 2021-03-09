@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <title>测试页面</title>
+    <style>
+        #info, #fileInfo {
+            border: 1px solid black;
+        }
+
+        button {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <form action="http://8.136.123.5:9998/file/upload" id="myForm" method="post" enctype="multipart/form-data"><!--改写此处的action-->
+        <input type="file" name="file">文件上传</input>
+        <input type="submit" id="mySubmit">
+    </form>
+    <button id='getInfo'>获取最新十条上传文件信息</button>
+    <div id="info"></div>
+    <hr/>
+    <input id="uuidText" type="text" placeholder="请输入uuid">
+    <button id='getInfoByUuid'>根据uuid获取文件信息</button>
+    <button id='downloadFile'>下载该文件</button>
+	<button id='download1File'>下载未解密文件</button>
+    <div id='fileInfo'></div>
+    <script
+        src="https://code.jquery.com/jquery-3.6.0.js"
+        integrity="sha256-H+K7U5CnXl1h5ywQfKtSj8PCmoN9aaq30gDh27Xc0jk="
+        crossorigin="anonymous">
+    </script>
+    <script>
+        let getInfoBtn = $('#getInfo')
+        let getInfoByUuid = $('#getInfoByUuid')
+        let downloadFile = $('#downloadFile')
+        let download1File = $('#download1File')
+        var xhr = new XMLHttpRequest()
+        getInfoBtn.on('click', function () {
+            $.ajax({
+                url: 'http://8.136.123.5:9998/file/find',
+                type: 'get',
+                success: function(res) {
+                    $('#info').text('上传文件信息:' + JSON.stringify(res))
+                },
+                error: function (err) {
+                    alert('获取上传文件信息失败')
+                }
+            })
+        })
+        getInfoByUuid.on('click', function () {
+            var uid = $('#uuidText').val()
+            $.ajax({
+                url: 'http://8.136.123.5:9998/file/find/'+uid, // 改写此处的url
+                type: 'get',
+                data: {
+                    uuid: uid
+                },
+                success: function (res) {
+                    $('#fileInfo').text('文件信息:' + JSON.stringify(res))
+                },
+                error: function (err) {
+                    alert('根据uuid获取文件信息失败' + err)
+                }
+            })
+        })
+        downloadFile.on('click', function () {
+            var uid = $('#uuidText').val()
+            window.open("http://8.136.123.5:9998/file/download/"+uid)
+        })
+		download1File.on('click', function () {
+            var uid = $('#uuidText').val()
+            window.open("http://8.136.123.5:9998/file/download1/"+uid)
+        })
+    </script>
+</body>
+</html>

@@ -6,6 +6,7 @@ import org.eclipse.jetty.util.StringUtil;
 import uitls.JsonUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServlet;
@@ -28,23 +29,22 @@ public class FileInfoServlet extends HttpServlet {
         if (StringUtil.isBlank(type)) {
             return;
         }
-        PrintWriter out = response.getWriter();
-
+        ServletOutputStream out = response.getOutputStream();
         if (type.equals("new")) {
             // 查询最新的10条uuid数据
             List<FileInfo> tenFileinfo = FileDao.getTenFileinfo();
             if (tenFileinfo == null || tenFileinfo.isEmpty()) {
-                out.write("占无数据");
+                out.print("占无数据");
             } else {
-                out.write(JsonUtils.objectToJson(tenFileinfo));
+                out.print(JsonUtils.objectToJson(tenFileinfo));
             }
         } else if (type.equals("one")) {
             String uuid = request.getParameter("uuid");
             FileInfo fileinfo = FileDao.getFileinfo(uuid);
             if (fileinfo == null) {
-                out.write(JsonUtils.objectToJson(new FileInfo()));
+                out.print(JsonUtils.objectToJson(new FileInfo()));
             } else {
-                out.write(JsonUtils.objectToJson(fileinfo));
+                out.print(JsonUtils.objectToJson(fileinfo));
             }
         }
     }

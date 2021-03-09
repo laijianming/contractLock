@@ -37,6 +37,7 @@ public class SignFilter implements Filter {
                     System.out.println("验证签名通过");
                     // 签名通过
                     chain.doFilter(request,response);
+                    return;
                 } else {
                     // 签名不通过
                     out.print("403 请求不合法");
@@ -46,6 +47,7 @@ public class SignFilter implements Filter {
                 e.printStackTrace();
             }
         }
+        out.print("403 请求不合法");
     }
 
     @Override

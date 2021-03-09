@@ -86,7 +86,7 @@ public class FileController {
 
         ServletOutputStream out = response.getOutputStream();
         FileInfo fileinfo = FileDao.getFileinfo(uuid);
-        if (fileinfo == null || fileinfo.getRandomkey() == null) {
+        if (fileinfo == null || fileinfo.getRandomkey() == null || "".equals(fileinfo.getRandomkey().trim())) {
             out.print("该文件不存在");
             return;
         }
@@ -99,9 +99,43 @@ public class FileController {
         randomkey = RSAEncrypt.decrypt(randomkey, ClientConstant.PRI);
 
         // 使用解密后的随机key对文件流进行一个对称性解密
-        int length = EncryFileUtil.decryptFile(inputStream, out, randomkey);
+        ServletOutputStream outputStream = response.getOutputStream();
+        int length = EncryFileUtil.decryptFile(inputStream, outputStream, randomkey);
         // 输出解密后的文件流
         response.setContentLength(length);
+    }
+
+    /**
+     * 下载加密文件
+     * @param uuid 要下载的uuid
+     * @param response
+     * @return
+     */
+    @GetMapping("/file/download1/{uuid}")
+    public void download1File(@PathVariable("uuid") String uuid, HttpServletResponse response) throws Exception {
+
+        ServletOutputStream out = response.getOutputStream();
+        FileInfo fileinfo = FileDao.getFileinfo(uuid);
+        if (fileinfo == null || fileinfo.getRandomkey() == null) {
+            out.print("该文件不存在");
+            return;
+        }
+
+        // 从server端获取随机key加密的文件流
+        InputStream inputStream = HttpClientUtil.downloadFile(ClientConstant.BASE_SERVER_URL + ClientConstant.SERVER_UPLOAD_FILE_URL + "?uuid=" + uuid);
+        System.out.println("aa " + inputStream);
+        // 直接返回文件流
+        ServletOutputStream outputStream = response.getOutputStream();
+        byte[] bty = new byte[1024];
+        int length = 0;
+        int res = 0;
+        while ((length = inputStream.read(bty)) != -1) {
+            res += length;
+            outputStream.write(bty, 0, length);
+            outputStream.flush();
+        }
+        // 输出解密后的文件流
+        response.setContentLength(res);
     }
 
 }

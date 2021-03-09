@@ -28,7 +28,7 @@ public class FileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uuid = req.getParameter("uuid");
-        if (StringUtil.isBlank(uuid)) {
+        if (uuid == null || "".equals(uuid)) {
             return;
         }
         FileInfo fileinfo = FileDao.getFileinfo(uuid);
@@ -37,7 +37,8 @@ public class FileServlet extends HttpServlet {
         }
         String filename = fileinfo.getFilename();
         // 用于通过文件的uuid来获取加密文件流
-        String filepath = ServerConstant.FILE_PATH + "\\" + filename;
+        resp.setContentType("multipart/form-data");
+        String filepath = ServerConstant.FILE_PATH + "/" + filename;
         InputStream is = new FileInputStream(new File(filepath));
         ServletOutputStream outputStream = resp.getOutputStream();
         try {
@@ -89,7 +90,7 @@ public class FileServlet extends HttpServlet {
         FileInfo fileInfo = new FileInfo(uuid, filename, randomKey);
         FileDao.saveFileinfo(fileInfo);
         // 返回uuid
-        PrintWriter out = response.getWriter();
+        ServletOutputStream out = response.getOutputStream();
         out.print(uuid);
     }
 

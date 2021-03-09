@@ -5,6 +5,7 @@ import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.util.Random;
 
@@ -25,7 +26,49 @@ public class AesHelper {
     public static Cipher getDecryptCipher(String randomKey) throws Exception{
         return getCipher(Cipher.DECRYPT_MODE, randomKey);
     }
+
+    /**
+     * linux用生成规则
+     * @param model
+     * @param randomKey
+     * @return
+     * @throws Exception
+     */
     public static Cipher getCipher(int model, String randomKey) throws Exception{
+        //1.获取加密生成器
+        KeyGenerator keygen=KeyGenerator.getInstance("AES");
+
+        //2.根据ecnodeRules规则初始化密钥生成器
+        //生成一个128位的随机源,根据传入的字节数组
+        SecureRandom random=null;
+        try {
+            random = SecureRandom.getInstance("SHA1PRNG","SUN");
+        } catch (NoSuchProviderException e1) {
+            e1.printStackTrace();
+        }
+        random.setSeed(randomKey.getBytes());
+        keygen.init(128, random);
+        //3.产生原始对称密钥
+        SecretKey original_key=keygen.generateKey();
+        //4.获得原始对称密钥的字节数组
+        byte [] raw=original_key.getEncoded();
+        //5.根据字节数组生成AES密钥
+        SecretKey key=new SecretKeySpec(raw, "AES");
+        //6.根据指定算法AES自成密码器
+        Cipher cipher=Cipher.getInstance("AES");
+        //7.初始化密码器，第一个参数为加密(Encrypt_mode)或者解密解密(Decrypt_mode)操作，第二个参数为使用的KEY
+        cipher.init(model, key);
+        return cipher;
+    }
+
+    /**
+     * windows可用生成规则；与linux的生成规则不一样
+     * @param model
+     * @param randomKey
+     * @return
+     * @throws Exception
+     */
+    public static Cipher getCipherWin(int model, String randomKey) throws Exception{
         //1.获取加密生成器
         KeyGenerator keygen=KeyGenerator.getInstance("AES");
         //2.根据ecnodeRules规则初始化密钥生成器

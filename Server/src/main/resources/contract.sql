@@ -1,4 +1,4 @@
-CREATE DATABASE CONTRACT;
+Connect 'jdbc:derby:CONTRACT;create=true';
 
 CREATE TABLE fileinfo (
     fileid INTEGER NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1)primary key,

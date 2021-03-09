@@ -1,7 +1,7 @@
 # contractLock
 契约锁笔试项目
 ## 客户端
-客户端端口8080  
+客户端端口9998 
 ### 客户端提供接口  
  url 方法 参数  
 1、/file/upload  POST  MultipartFile file 文件上传  

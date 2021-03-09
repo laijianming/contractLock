@@ -1,5 +1,7 @@
 import constant.ServerConstant;
 import filter.SignFilter;
+import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -33,6 +35,12 @@ public class JettyWebApplication {
 
         // 添加过滤器 用于请求验证
         context.addFilter(new FilterHolder(new SignFilter()), "/*", EnumSet.of(DispatcherType.REQUEST));
+
+        context.setClassLoader(Thread.currentThread().getContextClassLoader());
+
+//        MyJettyHandler myJettyHandler = new MyJettyHandler();
+//        myJettyHandler.setServer(server);
+//        myJettyHandler.start();
 
         // 启动jetty服务
         server.start();

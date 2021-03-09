@@ -1,5 +1,9 @@
 package com.ragdoll.aesEncript;
 
+import com.ragdoll.constant.ClientConstant;
+import com.ragdoll.rsaEncript.RSAEncrypt;
+import org.junit.Test;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -76,5 +80,34 @@ public class EncryFileUtil {
         zipInputStream.close();
         return res;
     }
+
+
+    /**
+     * jianming
+     */
+    @Test
+    public void test() throws Exception {
+        InputStream is = new FileInputStream(new File("D:\\test\\5.jpg"));
+        String randomKey = AesHelper.getRandomKey();
+        System.out.println(randomKey);
+        // 对文件对称加密
+        encryptFile("D:\\test\\1.jpg",is, randomKey);
+
+        // 公钥加密
+        String pub = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCeYKvm3YxzFOlrzGEytmgCKcXNhVX+mbp687D01rAiO" +
+        "G3bjozGGsRqS7mpRnhj6KdyWj79iVz0BNkfW7hyOmTc12XaxM779TQVNiVlWn7u8hv6mCRb+MMOzNfxRhAqfAHVPqi+a7n1Kl4E1Q0i1dm" +
+        "WsD4miKQmmFsBCebXSMqrEQIDAQAB";
+        randomKey = RSAEncrypt.encrypt(randomKey, pub);
+        System.out.println("公钥加密后 " +randomKey);
+        // 私钥解密
+        randomKey = RSAEncrypt.decrypt(randomKey, ClientConstant.PRI);
+        System.out.println("私钥钥加密后 " +randomKey);
+
+        // 解密文件
+        is = new FileInputStream(new File("D:\\test\\1.jpg"));
+        OutputStream outputStream = new FileOutputStream(new File("D:\\test\\2.jpg"));
+        decryptFile(is, outputStream, randomKey);
+    }
+
 
 }
